@@ -1,0 +1,23 @@
+# Python environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+
+# Database (We don't want to track the actual data)
+*.db
+*.sqlite3
+
+# Environment variables
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+end
