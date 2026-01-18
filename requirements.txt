@@ -7,3 +7,5 @@ qiskit==1.4.3
 qiskit_aer==0.17.2
 qiskit_qasm3_import
 python-dotenv
+pytest
+httpx

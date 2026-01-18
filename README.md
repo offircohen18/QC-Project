@@ -85,7 +85,22 @@ Open a **new** terminal and run:
      "error": "QasmError: line 1:8 no viable alternative at input '...'"
    }
    ```
+## Testing
 
+The project includes integration tests to verify the full flow from task submission to result retrieval.
+
+### Prerequisites for Testing
+Ensure both the **API Server** and the **Worker Service** are running in the background.
+
+### Running the Tests
+1. Install testing dependencies:
+   ```bash
+   pip install pytest httpx
+   ``` 
+2. Run the tests using pytest:
+   ```bash
+      pytest
+   ```
 ## Implementation Details
 
 * **Language:** Python 3.11.4
