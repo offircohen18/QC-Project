@@ -50,7 +50,7 @@ def test_submit_and_get_task():
 
 def test_submit_empty_circuit():
     """Test that submitting an empty circuit string returns a 400 error."""
-    response = client.post("/tasks/", json={"circuit": "   "})
+    response = client.post("/tasks", json={"circuit": "   "})
     assert response.status_code == 400
     assert response.json()["detail"] == "Circuit cannot be empty"
 
@@ -69,7 +69,7 @@ def test_invalid_circuit_fails_gracefully():
     """
     invalid_circuit = "NOT A VALID QASM CIRCUIT"
 
-    response = client.post("/tasks/", json={"circuit": invalid_circuit})
+    response = client.post("/tasks", json={"circuit": invalid_circuit})
     assert response.status_code == 201
     task_id = response.json()["task_id"]
 

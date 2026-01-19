@@ -1,5 +1,7 @@
 from fastapi import HTTPException, APIRouter
 from pydantic import BaseModel
+import sqlite3
+
 from api_server.worker_client import submit_task_to_queue, get_task_info
 
 router = APIRouter()
@@ -10,31 +12,56 @@ class TaskRequest(BaseModel):
     circuit: str
 
 
-@router.post("/tasks/", status_code=201)
+@router.post("/tasks", status_code=201)
 async def submit_task(request: TaskRequest):
     """
-    Endpoint to submit a new quantum circuit for execution.
-    Validates input and returns the unique task ID and initial status.
+    Submit a new quantum circuit for asynchronous execution.
+    Returns a task ID immediately.
     """
     if not request.circuit.strip():
-        # Raise 400 if the circuit string is empty or just whitespace
         raise HTTPException(status_code=400, detail="Circuit cannot be empty")
 
-    # Delegate task creation to the worker client
-    result = submit_task_to_queue(request.circuit)
-    return result
+    try:
+        return submit_task_to_queue(request.circuit)
+
+    except sqlite3.Error as e:
+        print(f"Database error while creating task: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while creating task"
+        )
+
+    except Exception as e:
+        print(f"Unexpected error while creating task: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error"
+        )
 
 
 @router.get("/tasks/{task_id}")
 async def get_status(task_id: str):
     """
-    Endpoint to retrieve the status and results of a specific task.
-    Returns 404 if the task ID does not exist in the database.
+    Retrieve the status and result of a task by its ID.
     """
-    info = get_task_info(task_id)
+    try:
+        info = get_task_info(task_id)
+
+    except sqlite3.Error as e:
+        print(f"Database error while fetching task {task_id}: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while fetching task"
+        )
+
+    except Exception as e:
+        print(f"Unexpected error while fetching task {task_id}: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error"
+        )
 
     if info is None:
-        # Task not found in the database
         raise HTTPException(status_code=404, detail="Task not found")
 
     return info

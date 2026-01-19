@@ -21,3 +21,6 @@ env/
 .DS_Store
 Thumbs.db
 end
+
+# Test Files
+.pytest_cache/

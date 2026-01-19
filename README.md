@@ -55,7 +55,7 @@ Open a **new** terminal and run:
 ## API Usage Guide
 
 ### 1. Submit a Quantum Circuit
-**Endpoint:** `POST /tasks/`
+**Endpoint:** `POST /tasks`
 
 **Request Body Example:**
    ```json
@@ -87,10 +87,16 @@ Open a **new** terminal and run:
    ```
 ## Testing
 
-The project includes integration tests to verify the full flow from task submission to result retrieval.
+The project includes integration tests that validate the complete asynchronous flow:
+task submission → background execution → result retrieval.
+
+These tests interact with the real API endpoints and verify that the worker
+processes tasks correctly.
 
 ### Prerequisites for Testing
 Ensure both the **API Server** and the **Worker Service** are running in the background.
+Both services must be running simultaneously, as the tests rely on the worker
+to execute submitted tasks.
 
 ### Running the Tests
 1. Install testing dependencies:
@@ -101,6 +107,25 @@ Ensure both the **API Server** and the **Worker Service** are running in the bac
    ```bash
       pytest
    ```
+
+The tests will:
+
+* Submit a quantum circuit via the API
+
+* Poll the task status endpoint
+
+* Verify successful completion or failure handling
+
+* Validate edge cases (e.g., empty circuits, non-existent task IDs, and execution failures).
+
+### Notes
+* Tests are intentionally written as integration tests, not unit tests,
+to reflect real-world asynchronous behavior.
+
+* The database is shared between the API and the worker during testing.
+
+* Persistence across test runs is not required.
+
 ## Implementation Details
 
 * **Language:** Python 3.11.4

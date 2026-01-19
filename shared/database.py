@@ -71,3 +71,14 @@ def get_task_by_id(task_id: str):
     except sqlite3.Error as e:
         print(f"Database error while fetching task {task_id}: {e}")
         raise
+
+
+def reset_pending_tasks():
+    """Reset all 'pending' tasks back to 'submitted' on startup."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE tasks SET status = 'submitted' WHERE status = 'pending'"
+    )
+    conn.commit()
+    conn.close()

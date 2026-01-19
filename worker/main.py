@@ -1,6 +1,7 @@
 import time
 import json
 from shared.database import get_connection
+from shared.database import reset_pending_tasks
 from worker.executor import execute_circuit
 
 
@@ -45,11 +46,20 @@ def check_for_tasks():
 
 def main():
     """Main loop for the worker process."""
-    print("--- Quantum Worker started and polling ---")
+    print("--- Quantum Worker starting ---")
+
+    # clean up any tasks that were stuck in 'pending' from a previous run
+    try:
+        print("Checking for stuck tasks...")
+        reset_pending_tasks()
+        print("Cleanup complete.")
+    except Exception as e:
+        print(f"Cleanup failed: {e}")
+
+    print("--- Polling for tasks ---")
     try:
         while True:
             check_for_tasks()
-            # Wait for 5 seconds before checking the DB again to save CPU/IO
             time.sleep(5)
     except KeyboardInterrupt:
         print("--- Worker stopped by user ---")

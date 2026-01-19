@@ -41,4 +41,4 @@ if __name__ == "__main__":
     debug_mode = os.getenv("DEBUG", "True").lower() == "true"
 
     print(f"Running API on http://{host}:{port}")
-    uvicorn.run("api_server.main:app", host=host, port=port, reload=debug_mode)
+    uvicorn.run(app, host=host, port=port, reload=debug_mode)
